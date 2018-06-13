@@ -1,13 +1,20 @@
 import { makeExecutableSchema, addMockFunctionsToSchema, IMocks } from 'graphql-tools';
+import resolvers from "./resolvers";
 
 const typeDefs = `
 type Query {
-  test: String
+  books: [Book],
+  book(id: String): Book
+}
+
+type Book {
+  id: String
+  title: String
+  author: String
+  publicationYear: Int
 }
 `;
 
-const schema = makeExecutableSchema({ typeDefs });
-const mocks = { String: () => "It Works!" }
-addMockFunctionsToSchema({ schema, mocks });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 export default schema;

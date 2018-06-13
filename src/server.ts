@@ -13,9 +13,9 @@ class Server {
     }
 
     run() {
-        this.app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+        this.app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, tracing: true }));
         this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
-        this.app.listen(3000, () => console.log(`GraphiQL is now running on http://localhost:3000/graphiql`));
+        this.app.listen(8000, () => console.log(`GraphiQL is now running on http://localhost:8000/graphiql`));
     }
 }
 
