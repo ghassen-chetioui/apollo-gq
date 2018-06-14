@@ -1,0 +1,22 @@
+{
+  "books": [
+    {
+      "id": "1",
+      "title": "One Hundred Years of Solitude",
+      "author": "Gabriel García Márquez",
+      "publicationYear": 1967
+    },
+    {
+      "id": "2",
+      "title": "My Brilliant Friend",
+      "author": "Elena Ferrante",
+      "publicationYear": 2012
+    },
+    {
+      "id": "3",
+      "title": "La gang dei sogni",
+      "author": "Luca Di Fulvio",
+      "publicationYear": 2008
+    }
+  ]
+}
