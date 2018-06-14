@@ -17,6 +17,7 @@ type Book {
 }
 
 type CommandResult {
-  success: Boolean
+  success: Boolean!
+  error: String
 }
 `;

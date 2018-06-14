@@ -1,4 +1,5 @@
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
+import { inspect } from "util";
 
 const API_BASE_URI = "http://localhost:3000";
 
@@ -11,13 +12,23 @@ const resolvers = {
         addBook: (_: any, args: any) => {
             const body = { title: args.title, author: args.author, publicationYear: args.publicationYear };
             return fetch(`${API_BASE_URI}/books`, { method: "POST", body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
-                .then(_ => { return { success: true } })
-                .catch(_ => { return { success: false } })
+                .then(response => handleHttpResponse(response))
+                .catch(error => { return { success: false, error: inspect(error) } })
         },
         deleteBook: (_: any, args: any) => {
             return fetch(`${API_BASE_URI}/books/${args.id}`, { method: "DELETE" })
-                .then(_ => { return { success: true } })
+                .then(response => handleHttpResponse(response))
+                .catch(error => { return { success: false, error: inspect(error) } })
         }
+    }
+}
+
+function handleHttpResponse(response: Response) {
+    return {
+        success: response.ok,
+        error: !response.ok
+            ? `${response.status} - ${response.statusText}`
+            : undefined
     }
 }
 
