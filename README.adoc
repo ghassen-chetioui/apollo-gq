@@ -1,0 +1,9 @@
+== Simple GraphQL server using Apollo
+
+=== How to run
+
+[source]
+----
+npm run json-server
+npm run graphql-server
+----
