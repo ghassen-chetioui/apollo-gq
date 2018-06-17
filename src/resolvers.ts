@@ -1,7 +1,11 @@
+import { PubSub } from 'graphql-subscriptions';
 import fetch, { Response } from "node-fetch";
 import { inspect } from "util";
 
 const API_BASE_URI = "http://localhost:3000";
+const BOOK_ADDED_TRIGGER = "BOOK_ADDED";
+
+const pubsub = new PubSub();
 
 const resolvers = {
     Query: {
@@ -9,17 +13,30 @@ const resolvers = {
         book: (_: any, args: any) => fetch(`${API_BASE_URI}/books/${args.id}`).then(res => res.json())
     },
     Mutation: {
-        addBook: (_: any, args: any) => {
+        addBook: async (_: any, args: any) => {
             const body = { title: args.title, author: args.author, publicationYear: args.publicationYear };
-            return fetch(`${API_BASE_URI}/books`, { method: "POST", body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
-                .then(response => handleHttpResponse(response))
-                .catch(error => { return { success: false, error: inspect(error) } })
+            try {
+                const httpResponse = await fetch(`${API_BASE_URI}/books`, { method: "POST", body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+                const commandResponse = handleHttpResponse(httpResponse);
+                if (commandResponse.success) {
+                    pubsub.publish(BOOK_ADDED_TRIGGER, await httpResponse.json());
+                }
+                return commandResponse;
+            } catch (error) {
+                return { success: false, error: inspect(error) };
+            }
         },
-        deleteBook: (_: any, args: any) => {
-            return fetch(`${API_BASE_URI}/books/${args.id}`, { method: "DELETE" })
-                .then(response => handleHttpResponse(response))
-                .catch(error => { return { success: false, error: inspect(error) } })
+        deleteBook: async (_: any, args: any) => {
+            try {
+                const httpResponse = await fetch(`${API_BASE_URI}/books/${args.id}`, { method: "DELETE" });
+                return handleHttpResponse(httpResponse)
+            } catch (error) {
+                { return { success: false, error: inspect(error) } }
+            }
         }
+    },
+    Subscription: {
+        bookCreated: () => pubsub.asyncIterator(BOOK_ADDED_TRIGGER)
     }
 }
 

@@ -9,6 +9,10 @@ type Mutation {
   deleteBook(id: String!): CommandResult
 }
 
+type Subscription {
+  bookAdded: Book
+}
+
 type Book {
   id: String
   title: String
