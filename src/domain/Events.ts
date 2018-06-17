@@ -1,0 +1,1 @@
+export const BOOK_ADDED_EVENT = "BOOK_ADDED_EVENT";
