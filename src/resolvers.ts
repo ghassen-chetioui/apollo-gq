@@ -19,7 +19,9 @@ const resolvers = {
                 const httpResponse = await fetch(`${API_BASE_URI}/books`, { method: "POST", body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
                 const commandResponse = handleHttpResponse(httpResponse);
                 if (commandResponse.success) {
-                    pubsub.publish(BOOK_ADDED_TRIGGER, await httpResponse.json());
+                    const eventPayload = await httpResponse.json();
+                    console.log(`Will publish event ${JSON.stringify(eventPayload)}`)
+                    pubsub.publish(BOOK_ADDED_TRIGGER, { bookAdded: eventPayload });
                 }
                 return commandResponse;
             } catch (error) {
@@ -36,7 +38,7 @@ const resolvers = {
         }
     },
     Subscription: {
-        bookCreated: () => pubsub.asyncIterator(BOOK_ADDED_TRIGGER)
+        bookAdded: { subscribe: () => pubsub.asyncIterator(BOOK_ADDED_TRIGGER) }
     }
 }
 
